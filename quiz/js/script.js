@@ -12,7 +12,7 @@ let questions = [
   new Question("Quelle est l'orthographe exacte ?", ["satelite", "sattelite", "satellite", "sattellite"], "satellite"),
   new Question("Complétez avec la bonne conjugaison : La souris est mang__ par le chat.", ["manger","mangée", "mangé", "mangés"], "mangée"),
   new Question("Quel est le synonyme de subtiliser ?", ["voler","remplacer", "réparer", "fabriquer"], "voler"),
-  new Question("Qu'est-ce qu'un ornithorynque ?", ["un reptile","un oiseau", "un poisson", "un mammifère"], "un mammifère"),
+  new Question("Qu'est-ce qu'un ornithorynque ?", ["un reptile","un oiseau", "un poisson", "un mammifère"], "un mammifère")
   new Question("Cherchez l'intrus.", ["fourmi", "cigale", "araignée", "sauterelle"], "araignée"),
   new Question("Combien de lettres contient le mot le plus long en français ?", ["21","23", "25", "27"], "25"),
   new Question("Quelle est l'erreur dans cette phrase : Maître corbeau sur un arbre perché tenais en son bec un fromage.", ["corbeauX","tenaiT", "perchER", "sonT"], "tenaiT"),
