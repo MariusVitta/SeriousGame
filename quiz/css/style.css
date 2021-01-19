@@ -6,6 +6,18 @@
   padding: 0;
   text-align: center;
 }
+#bouton{
+  background-color: #ffa502; 
+  border: 1px solid black;  
+  width:100px;
+  line-height:50px;
+  text-align:center;
+  font-size: 1.3rem;
+  color: #2f3542;
+}
+#resultatBarre{
+    line-height:50px;
+}
 
 body {
   display: grid;
