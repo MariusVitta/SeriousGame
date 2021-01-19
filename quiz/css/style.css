@@ -18,7 +18,14 @@
 #resultatBarre{
     line-height:50px;
 }
+a:link, a:visited /* visited link */ { 
+    text-decoration:none;
+    color: #FFFFFF;
+} 
 
+a:hover {
+    color: #ffa502; /* pour le passage de la souris*/
+}
 body {
   display: grid;
   align-items: center;
