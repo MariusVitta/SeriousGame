@@ -1,18 +1,29 @@
-//noPressEnter(document.body);
+
+    /* variable globale  */
+    var resultat = 0;
+    var btn = document.getElementById('bouton');
+    var res;
+    var score = 0; /* variable du score */
+    var cpt = 1; /* var compteur nombre de questions */
+
+    /** méthode qui donne un nombre entier aléatoire entre min et max
+    * param min: entier plus petit
+    * param max: entier plus grand
+    */
     function entierAleatoire(min, max){
         return Math.floor(Math.random() * (max - min + 1)) + min;
     }
-    var resultat = 0;
+    
     function creerCalcul(){
       
       var operateurs = ["+", "-", "*", "/"];
       var choixOP = operateurs[Math.floor(Math.random()*operateurs.length)]
       var nombre1 = -1,nombre2 = -1;
       if (choixOP == "/") {
-        nombre1 = entierAleatoire(0,10);
+        nombre1 = entierAleatoire(1,10);
         nombre2 = entierAleatoire(1,10);
         while (nombre1 < nombre2 ) {
-          nombre2 = entierAleatoire(0,10);
+          nombre2 = entierAleatoire(1,10);
         }
       } 
       else{
@@ -30,29 +41,22 @@
       document.getElementById('resultat').innerHTML = "";
     }
     
-    var btn = document.getElementById('bouton');
-    var res;
-    /* changement du score */
-    var score = 0; 
-    
-    /* var compteur nombre de questions */
-    var cpt = 1;
-
     btn.onclick = function() {
       if (btn.value === 'Valider') {
         res = document.getElementById('resultatBarre').value; 
         if(cpt == 4){
-          document.getElementById('bouton').disabled = true;
-          document.getElementById('fin').innerHTML = "<a href=\"index.html\">retourner au menu principal</a>"; 
+            document.getElementById('bouton').disabled = true;
+            document.getElementById('fin').innerHTML = "<a href=\"index.html\">retourner au menu principal</a>"; 
         }
         if(res == resultat){
-          document.getElementById('resultat').innerHTML = "Bonne réponse";
-          score += 1;
-          document.getElementById('score').innerHTML = score;
-          creerCalcul();
+            //document.getElementById('resultat').innerHTML = "Bonne réponse";
+            score += 1;
+            document.getElementById('score').innerHTML = score;
+        
+            creerCalcul();
         }
         else{
-          document.getElementById('resultat').innerHTML = "mauvaise réponse";
+          //document.getElementById('resultat').innerHTML = "mauvaise réponse";
           creerCalcul();
         }
         cpt++;
