@@ -8,12 +8,36 @@
   <title>Accueil - quiz</title>
 
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css">
-  <link href="../css/style.css" rel="stylesheet">
+  <link href="./css/style.css" rel="stylesheet">
 </head>
 
 <body>
-
   <div class="container">
+    <h3>Bonjour, veuillez entrer votre pseudo : </h3>
+    <textarea id="myTextarea" rows="1" cols="20"></textarea>
+    <p></p>
+    <button onclick="mySave()">Ok</button>
+   <!-- <button onclick="myLoad()">Load</button>-->
+    <script>
+      function mySave() {
+        var pseudo = document.getElementById("myTextarea").value;
+        var score = 0;
+        localStorage.setItem("pseudo", pseudo);
+
+        localStorage.setItem("score", score);
+      }
+      //function myLoad() {
+        //var myContent = localStorage.getItem("myContent");
+        //document.getElementById("myTextarea").value = myContent;
+      //}
+      //alert(localStorage.getItem('pseudo'));
+      alert(localStorage.getItem('score'));
+    </script>
+ 
+  </div>
+  <div class="container">
+
+
     <div id="quiz">
       <h1><span>Q</span>uiz <i class="far fa-question-circle"></i></h1>
 
@@ -22,34 +46,49 @@
       <h3 id="score"></h3>
 
       <div class="choices">
-        <a href="jeuDeCalcul.html">
+        <a href="niveau_calcul.html">
             <button id="guess0" class="btn">        
               <p id="choice0">jeu de calcul</p>
             </button>
         </a>
-        <a href="QCM.html">
+        <a href="niveau_qcm.html">
             <button id="guess1" class="btn">
               <p id="choice1">QCM</p>
             </button>
         </a>
-        <a href="trouveDescriptionImage.html">
+        <a href="niveau_comprehension.html">
             <button id="guess2" class="btn">
-              <p id="choice2">1 image/ 5 mots</p>
+              <p id="choice2">expression écrite</p>
             </button>
         </a>
-        <a href="texteComprehension.html">
+        <!-- <a href="texteComprehension.html">
             <button id="guess3" class="btn">
               <p id="choice3">texte à trou</p>
+            </button>
+        </a> -->
+        <a href="quizAideDomicile.html">
+            <button id="guess4" class="btn">
+              <p id="choice4">quiz aide à domicile</p>
             </button>
         </a>
       </div>
       <p id="progress"></p>
+
     </div>
   </div>
    
-  <!--<script src="./scriptMain.js" type="text/javascript" ></script>-->
+  
 </body>
 
 
+<footer>
+    
+ <div class="container">
+    <h3>Vous voulez savoir savoir comment devenir Aide à Domicile ? </h3>
+  <p>
+    L’aide à domicile se déplace chez des particuliers pour contribuer à leur maintien à domicile. Les profils de ces particuliers, enfants ou adultes, sont divers : personnes âgées, accidentées, personnes malades ou handicapées… Leur point commun étant la perte d’autonomie ponctuelle ou permanente, l’aide à domicile les assiste dans les tâches matérielles de la vie quotidienne. Ce professionnel assure un travail matériel mais aussi moral et social.</p> 
+  <p> Pour plus d'informations : <a href="https://www.entreprises.cci-paris-idf.fr/web/rh/newsletter-capital-rh-fiche-metier-aide-a-domicile"> clique ici</a>.</p>
+  </div>
+</footer>
 
 </html>
