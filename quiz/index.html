@@ -13,31 +13,10 @@
 
 <body>
   <div class="container">
-    <h3>Bonjour, veuillez entrer votre pseudo : </h3>
-    <textarea id="myTextarea" rows="1" cols="20"></textarea>
-    <p></p>
-    <button onclick="mySave()">Ok</button>
-   <!-- <button onclick="myLoad()">Load</button>-->
-    <script>
-      function mySave() {
-        var pseudo = document.getElementById("myTextarea").value;
-        var score = 0;
-        localStorage.setItem("pseudo", pseudo);
 
-        localStorage.setItem("score", score);
-      }
-      //function myLoad() {
-        //var myContent = localStorage.getItem("myContent");
-        //document.getElementById("myTextarea").value = myContent;
-      //}
-      //alert(localStorage.getItem('pseudo'));
-      alert(localStorage.getItem('score'));
-    </script>
- 
-  </div>
-  <div class="container">
-
-
+    <a href="score.html">
+      <h3>score</h3>
+    </a>
     <div id="quiz">
       <h1><span>Q</span>uiz <i class="far fa-question-circle"></i></h1>
 
