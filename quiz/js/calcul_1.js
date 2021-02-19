@@ -98,11 +98,10 @@ btn.onclick = function() {
     res = document.getElementById('resultatBarre').value; 
     if(cpt == 4){
       /* enregistement du score utilisateur */
-
+		enregistrerResultat("scoreCalcul",score);	
+      	document.getElementById('bouton').disabled = true;
+      	document.getElementById('fin').innerHTML = "<a href=\"../index.html\">retourner au menu principal</a>"; 
 	  
-      document.getElementById('bouton').disabled = true;
-      document.getElementById('fin').innerHTML = "<a href=\"../index.html\">retourner au menu principal</a>"; 
-	  enregistrerResultat("scoreCalcul",res);
     }
     if(res == resultat){
       document.getElementById('resultat').innerHTML = "Bonne réponse";
