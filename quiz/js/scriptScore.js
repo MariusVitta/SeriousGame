@@ -141,7 +141,14 @@ function checkCookie() {
                 </tr>
             `;
         }
-        
+        /* ajout de la ligne finale score */
+        lignes +=`<tr style="border-style: double;">
+                        <td> Total </td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                  </tr>
+        `;
         table = `
         <thead>
             <tr>
@@ -157,6 +164,7 @@ function checkCookie() {
         `;
 
         afficherElement("table",table);
+        calculTotal();
     } else {
         table = `
         <thead>
@@ -168,7 +176,8 @@ function checkCookie() {
             </tr>
         </thead> 
         `;
-        afficherElement("table",table);
+
+        afficherElement("table",table);   
     }
 }
 
@@ -180,6 +189,44 @@ function checkCookie() {
 function afficherElement(id, text) {
     let element = document.getElementById(id);
     element.innerHTML = text;
+}
+
+/** fonction de calcul du score total pour chaque categorie
+ * elle est prise en compte seulement si le jeu obtiens un score dans l'une des 3 categories
+ *
+ */
+function calculTotal(){
+    var tableau = document.getElementById("table"); /* selection du tableau */
+    var totalCalcul = 0, totalComprehension = 0, totalQCM = 0; /* variable du cumul du score par colonne */
+    var nbColonne = tableau.rows[0].cells.length; 
+    var nbLignes = tableau.rows.length;
+    var i,j;
+    var nb;
+
+    /* on commence à l'indice 1 afin de ne pas avoir le nom des colonne 
+     * qui nous generaient dans le calcul
+    */
+    for ( i = 1 ; i < nbLignes ; i++) {
+        /* verification que la case du tableau ne soit pas vide */
+        if(tableau.rows[i].cells.item(nbColonne - 3) != undefined){
+            nb = parseInt(tableau.rows[i].cells.item(nbColonne -3).innerText,10);
+            totalCalcul += isNaN(nb) ? 0 : nb;
+        }
+        if(tableau.rows[i].cells.item(nbColonne - 2) != undefined){
+            nb = parseInt(tableau.rows[i].cells.item(nbColonne - 2).innerText,10);
+            totalComprehension += isNaN(nb) ? 0 : nb;
+        }
+
+        if(tableau.rows[i].cells.item(nbColonne - 1) != undefined){
+             nb = parseInt(tableau.rows[i].cells.item(nbColonne - 1).innerText,10);
+            totalQCM +=  isNaN(nb) ? 0 : nb;
+        }
+    }
+
+    /* ajout des totaux dans le HTML */ 
+    tableau.rows[nbLignes - 1].cells.item(nbColonne - 3).innerHTML = totalCalcul;
+    tableau.rows[nbLignes - 1].cells.item(nbColonne - 2).innerHTML = totalComprehension;
+    tableau.rows[nbLignes - 1].cells.item(nbColonne - 1).innerHTML = totalQCM;
 }
 
  // au chargement de la fenetre on lance l'affichage du tableau
