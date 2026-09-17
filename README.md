@@ -1,36 +1,45 @@
 # SeriousGame
 
-Serious game de sensibilisation et de formation, centré sur des parcours de quiz en JavaScript.
+Serious game de sensibilisation et de formation, construit autour de parcours de quiz en JavaScript statique.
 
 ## Vue d'ensemble
 
-Le projet propose plusieurs parcours :
+Le projet contient plusieurs modules de quiz :
 
 - calcul
 - QCM
 - compréhension
 - aide à domicile
 
-Les jeux partagent une logique commune pour gérer :
+L’objectif est de garder une structure simple et maintenable, sans framework ni build, tout en évitant la duplication de logique entre les différents jeux.
 
-- la progression
-- le rendu DOM
-- le stockage des scores dans les cookies
-- les comportements de validation et de fin de partie
+## Principe d'architecture
 
-Le projet est volontairement conservé simple, sans framework ni build, afin de rester compatible avec un usage local et statique.
+Le cœur du projet est centralisé dans le noyau partagé :
 
-## Structure du dépôt
+- `quiz/js/core/quiz-core.js`
+- `quiz/js/core/cookie-storage.js`
+- `quiz/js/core/quiz-engine.js`
+
+Ce noyau gère :
+
+- la création des questions et des quiz
+- le rendu du DOM
+- la progression entre questions
+- le stockage et la lecture des scores dans les cookies
+- la logique commune de fin de partie
+
+Les jeux ne réécrivent plus leur logique métier de base : ils appellent le moteur partagé et ne se concentrent que sur leurs données et leur point d’entrée.
+
+## Structure actuelle du dépôt
 
 ```text
 SeriousGame/
 ├─ README.md
+├─ .gitignore
 ├─ quiz/
 │  ├─ index.html
 │  ├─ score.html
-│  ├─ niveau-calcul.html
-│  ├─ niveau-qcm.html
-│  ├─ niveau-comprehension.html
 │  ├─ aide-domicile.html
 │  ├─ css/
 │  ├─ html/
@@ -45,9 +54,9 @@ SeriousGame/
 │  │  └─ comprehension-niveau-3.html
 │  ├─ js/
 │  │  ├─ core/
+│  │  │  ├─ cookie-storage.js
 │  │  │  ├─ quiz-core.js
-│  │  │  ├─ quiz-engine.js
-│  │  │  └─ cookie-storage.js
+│  │  │  └─ quiz-engine.js
 │  │  ├─ data/
 │  │  │  └─ qcm-niveau-1.js
 │  │  ├─ games/
@@ -64,61 +73,44 @@ SeriousGame/
 │  │  └─ script-score.js
 │  └─ tests/
 │     └─ quiz-regressions.test.js
-└─ .gitignore
+└─
 ```
 
-## Architecture
+## Règles de fonctionnement du projet
 
-Le noyau partagé est centralisé dans `quiz/js/core/quiz-core.js`.
+Les jeux partagent un comportement cohérent :
 
-Il contient :
+- le compteur affiche la progression en cours : `Question X sur Y • N questions restantes`
+- la saisie est réinitialisée entre deux questions
+- la soumission ne recharge plus la page par défaut
+- la dernière question clôt proprement la partie
+- le score est persisté dans les cookies pour les parcours concernés
+- les pages HTML et leur script associé sont alignés sur des identifiants de conteneur cohérents
 
-- `Question`
-- `Quiz`
-- `CookieStorage`
-- `createQuizPage(...)`
-- `createCalculationQuiz(...)`
+## Démarrage local
 
-Cette organisation permet de :
-
-- éviter la duplication du code entre les jeux
-- uniformiser la gestion des cookies et des scores
-- garder une logique de rendu cohérente
-- sécuriser les régressions avec un petit jeu de tests
-
-## Règles de fonctionnement
-
-Les jeux respectent un comportement homogène :
-
-- le compteur affiche le numéro de la question et le nombre restant : `Question X sur Y • N questions restantes`
-- le champ de saisie est réinitialisé à chaque nouvelle question
-- la validation du formulaire ne recharge plus la page
-- la fin de partie est gérée proprement à la dernière question
-- les scores sont enregistrés dans les cookies de navigation
-
-## Utilisation
-
-Le projet est statique : il fonctionne par simple ouverture du navigateur sur les fichiers HTML, sans serveur ni framework.
+Le projet est pensé pour fonctionner sans serveur ni framework. Il suffit d’ouvrir les fichiers HTML dans un navigateur moderne.
 
 Exemple :
 
 ```bash
 cd SeriousGame/quiz
-# puis ouvrir index.html dans un navigateur
+# puis ouvrir index.html dans le navigateur
 ```
 
-## Tests
+## Tests de régression
 
-Le projet inclut des tests Node qui couvrent les régressions importantes :
+Une suite Node est présente pour sécuriser les points sensibles du projet :
 
 - gestion des cookies et du score
 - progression du quiz
 - fin de partie
 - réinitialisation du champ de réponse
-- validation clavier/bouton
-- ordre de chargement des scripts dans les pages de jeu
+- validation via bouton et touche Entrée
+- vérification du chargement du noyau partagé
+- contrats HTML/JS des jeux du parcours
 
-Commande de validation :
+Pour lancer les tests :
 
 ```bash
 cd quiz
@@ -132,13 +124,22 @@ cd quiz
 node --test --test-reporter=spec
 ```
 
-## Point d'amélioration retenu
+## Choix d'architecture retenu
 
-Le projet privilégie une architecture légère et lisible, sans framework, mais avec une modularisation raisonnable :
+Le projet privilégie une architecture légère et lisible, sans framework :
 
-- `core` pour la logique partagée
-- `data` pour les contenus
-- `games` pour les points d'entrée
-- `html` pour les écrans
+- `core` : moteur partagé et utilitaires communs
+- `data` : données de quiz et contenus statiques
+- `games` : points d’entrée des jeux
+- `html` : écrans et feuilles de style associées
 
-Cette approche garde le projet simple, maintenable et extensible sans introduire une complexité inutile.
+Cette approche garde le projet simple, maintenable et extensible sans introduire une complexité inutile ni dépendre d’un environnement de build lourd.
+
+## État actuel
+
+Le projet est en version stable pour un usage local statique, avec :
+
+- un noyau partagé consolidé,
+- des pages HTML alignées sur les scripts associés,
+- un nettoyage des dépendances et du code mort,
+- une couverture de tests sur les points de régression identifiés.

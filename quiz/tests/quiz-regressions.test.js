@@ -84,6 +84,10 @@ function loadScript(filePath, document, customWindow = {}) {
   return context;
 }
 
+function extractHtmlIds(html) {
+  return [...html.matchAll(/id=(?:"|')([^"']+)(?:"|')/g)].map((match) => match[1]);
+}
+
 test('CookieStorage.saveScore ajoute la valeur au cookie existant', () => {
   const document = createDocument();
   const windowObject = {};
@@ -202,5 +206,100 @@ test('les jeux QCM ciblent bien le conteneur final fin', () => {
   filePaths.forEach((filePath) => {
     const content = fs.readFileSync(filePath, 'utf8');
     assert.match(content, /rootId:\s*'fin'/);
+  });
+});
+
+test('le contrat HTML/JS est cohérent pour les jeux du parcours', () => {
+  const cases = [
+    {
+      name: 'QCM niveau 1',
+      htmlPath: path.join(__dirname, '..', 'html', 'qcm-niveau-1.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'games', 'qcm-niveau-1.js'),
+      rootId: 'fin',
+      requiredIds: ['question', 'score', 'progress', 'guess0', 'guess1', 'guess2', 'guess3', 'choice0', 'choice1', 'choice2', 'choice3'],
+    },
+    {
+      name: 'QCM niveau 2',
+      htmlPath: path.join(__dirname, '..', 'html', 'qcm-niveau-2.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'qcm-niveau-2.js'),
+      rootId: 'fin',
+      requiredIds: ['question', 'score', 'progress', 'guess0', 'guess1', 'guess2', 'guess3', 'choice0', 'choice1', 'choice2', 'choice3'],
+    },
+    {
+      name: 'QCM niveau 3',
+      htmlPath: path.join(__dirname, '..', 'html', 'qcm-niveau-3.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'qcm-niveau-3.js'),
+      rootId: 'fin',
+      requiredIds: ['question', 'score', 'progress', 'guess0', 'guess1', 'guess2', 'guess3', 'choice0', 'choice1', 'choice2', 'choice3'],
+    },
+    {
+      name: 'Calcul niveau 1',
+      htmlPath: path.join(__dirname, '..', 'html', 'calcul-niveau-1.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'games', 'calcul-niveau-1.js'),
+      rootId: 'quiz',
+      requiredIds: ['question', 'score', 'progress', 'resultatBarre', 'bouton', 'resultat', 'fin'],
+    },
+    {
+      name: 'Calcul niveau 2',
+      htmlPath: path.join(__dirname, '..', 'html', 'calcul-niveau-2.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'calcul-niveau-2.js'),
+      rootId: 'quiz',
+      requiredIds: ['question', 'score', 'progress', 'resultatBarre', 'bouton', 'resultat', 'fin'],
+    },
+    {
+      name: 'Calcul niveau 3',
+      htmlPath: path.join(__dirname, '..', 'html', 'calcul-niveau-3.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'calcul-niveau-3.js'),
+      rootId: 'quiz',
+      requiredIds: ['question', 'score', 'progress', 'resultatBarre', 'bouton', 'resultat', 'fin'],
+    },
+    {
+      name: 'Compréhension niveau 1',
+      htmlPath: path.join(__dirname, '..', 'html', 'comprehension-niveau-1.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'comprehension-niveau-1.js'),
+      rootId: 'quiz',
+      requiredIds: ['question', 'score', 'progress', 'guess0', 'guess1', 'guess2', 'guess3', 'choice0', 'choice1', 'choice2', 'choice3'],
+    },
+    {
+      name: 'Compréhension niveau 2',
+      htmlPath: path.join(__dirname, '..', 'html', 'comprehension-niveau-2.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'comprehension-niveau-2.js'),
+      rootId: 'quiz',
+      requiredIds: ['question', 'score', 'progress', 'guess0', 'guess1', 'guess2', 'guess3', 'choice0', 'choice1', 'choice2', 'choice3'],
+    },
+    {
+      name: 'Compréhension niveau 3',
+      htmlPath: path.join(__dirname, '..', 'html', 'comprehension-niveau-3.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'comprehension-niveau-3.js'),
+      rootId: 'quiz',
+      requiredIds: ['question', 'score', 'progress', 'guess0', 'guess1', 'guess2', 'guess3', 'choice0', 'choice1', 'choice2', 'choice3'],
+    },
+    {
+      name: 'Aide à domicile',
+      htmlPath: path.join(__dirname, '..', 'aide-domicile.html'),
+      jsPath: path.join(__dirname, '..', 'js', 'aide-domicile.js'),
+      rootId: 'quiz',
+      requiredIds: ['question', 'score', 'progress', 'guess0', 'guess1', 'guess2', 'choice0', 'choice1', 'choice2'],
+    },
+  ];
+
+  cases.forEach(({ name, htmlPath, jsPath, rootId, requiredIds }) => {
+    const html = fs.readFileSync(htmlPath, 'utf8');
+    const js = fs.readFileSync(jsPath, 'utf8');
+    const ids = extractHtmlIds(html);
+
+    assert.ok(ids.includes(rootId), `${name}: l'élément racine ${rootId} est absent du HTML`);
+    requiredIds.forEach((id) => {
+      assert.ok(ids.includes(id), `${name}: l'élément ${id} est absent du HTML`);
+    });
+
+    const scriptSources = [...html.matchAll(/<script[^>]*src=["']([^"']+)["'][^>]*>/g)].map((match) => match[1]);
+    assert.ok(scriptSources.some((src) => src.endsWith(path.basename(jsPath))), `${name}: le script JS attendu n'est pas chargé par le HTML`);
+
+    if (rootId === 'fin') {
+      assert.match(js, /rootId\s*:\s*['"]fin['"]/u, `${name}: le script ne cible pas le conteneur final attendu`);
+    } else {
+      assert.ok(/createCalculationQuiz\s*\(/.test(js) || /rootId\s*:\s*['"]quiz['"]/u.test(js), `${name}: le script ne cible pas le conteneur principal attendu`);
+    }
   });
 });
