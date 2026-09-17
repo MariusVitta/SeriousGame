@@ -8,7 +8,7 @@
 
   window.QuizCore.createQuizPage({
     questions,
-    rootId: 'quiz',
+    rootId: 'fin',
     resultCookieName: 'scoreQCM',
     finalView: (currentQuiz) => `
       <h1>Quiz terminé !</h1>

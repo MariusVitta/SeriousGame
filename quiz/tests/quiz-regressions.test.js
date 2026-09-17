@@ -192,3 +192,15 @@ test('les pages de jeu chargent le noyau partagé avant le script de jeu', () =>
     assert.ok(content.indexOf('quiz-core.js') < content.indexOf('games/'));
   });
 });
+
+test('les jeux QCM ciblent bien le conteneur final fin', () => {
+  const filePaths = [
+    path.join(__dirname, '..', 'js', 'qcm-niveau-2.js'),
+    path.join(__dirname, '..', 'js', 'qcm-niveau-3.js'),
+  ];
+
+  filePaths.forEach((filePath) => {
+    const content = fs.readFileSync(filePath, 'utf8');
+    assert.match(content, /rootId:\s*'fin'/);
+  });
+});
