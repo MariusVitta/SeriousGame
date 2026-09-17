@@ -1,60 +1,25 @@
-/** setter sur un cookie en particulier
- * 
- * @param { cookie que l'on veut créer/mettre à jour sa valeur} cname 
- * @param {valeur à affecter au cookie} cvalue 
- * 
- * le "path=/;" sert à ce que les cookies soient accessible sur toutes les pages
- */
-function setCookie(cname, cvalue) {
-    document.cookie = cname + "=" + cvalue + ";path=/;";
+const cookieStorage = window.QuizCore ? window.QuizCore.CookieStorage : {
+  setCookie(name, value) {
+    document.cookie = name + '=' + encodeURIComponent(value) + ';path=/;';
+  },
+  reset(name) {
+    document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/;';
+  },
+  getCookie(name) {
+    const value = document.cookie.split('; ').find((row) => row.startsWith(name + '='));
+    return value ? decodeURIComponent(value.split('=')[1]) : '';
+  },
+  saveScore(name, value) {
+    const existing = this.getCookie(name);
+    const nextValue = existing ? `${existing}/${value}` : String(value);
+    this.reset(name);
+    this.setCookie(name, nextValue);
+  },
+};
+
+function enregistrerResultat(cname, cvalue) {
+  cookieStorage.saveScore(cname, cvalue);
 }
-
-    /** fonction de réinitialisation d'un cookie
-    * 
-    * @param { cookie à reinitialiser} cname 
-    */
-function reset(cname) {
-    document.cookie = cname +"=; expires=Thu, 01 Jan 1970 00:00:00 GMT";
-}
-
-    /** fonction qui sert à concatener une nouvelle valeur à un cookie, les valeurs sont séparées par des slash
-    * 
-    * @param {nom du cookie donc on veut ajouter une valeur} cname 
-    * @param {valeur à concatener} concatValue 
-    * 
-    *  exemple: 
-    *      document.cookie = "scoreQCM=5";
-    *      concatCookie("scoreQCM",7);
-    *      document.cookie  == "scoreQCM=5/7"
-    */
-function concatCookie(cname,concatValue){
-    var nouvelleValeur = document.cookie.split('; ').find(row => row.startsWith(cname)).split('=')[1];
-    nouvelleValeur += "/" + concatValue;
-    reset(cname);
-    setCookie(cname,nouvelleValeur);
-}
-
-    /** tester l'existence d'un cookie
-    * 
-    * @param {nom du cookie} cname 
-    */
-function testExistence(cname){
-    return (document.cookie.split(';').some((item) => item.trim().startsWith(cname +'=')));
-}
-
-    /** enregistrer le resultat d'un jeu
-    * 
-    * @param {nom du cookie} cname 
-    * @param {valeur du cookie} cvalue 
-    */
-function enregistrerResultat(cname,cvalue){
-    if(!testExistence(cname))
-        setCookie(cname,cvalue);
-    else
-        concatCookie(cname,cvalue);
-}
-
-
 class Question {
     constructor(text, choices, answer) {
         this.text = text;
