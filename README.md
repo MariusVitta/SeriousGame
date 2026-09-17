@@ -1,61 +1,144 @@
 # SeriousGame
 
-Serious game de gestion de projet basé sur la méthode SCRUM.
+Serious game de sensibilisation et de formation, centré sur des parcours de quiz en JavaScript.
 
 ## Vue d'ensemble
 
-Ce projet contient un parcours de quiz en JavaScript, avec plusieurs niveaux (calcul, QCM, compréhension, aide à domicile) et un moteur partagé pour la logique commune.
+Le projet propose plusieurs parcours :
 
-## Organisation du projet
+- calcul
+- QCM
+- compréhension
+- aide à domicile
 
-- `quiz/index.html` : page d'accueil du parcours
-- `quiz/html/` : pages HTML de niveaux et écrans de jeu
-- `quiz/css/` : styles du projet
-- `quiz/js/core/` : logique commune en modules ES6 (`cookie-storage.js`, `quiz-engine.js`)
-- `quiz/js/data/` : données de quiz et contenus de questions
-- `quiz/js/games/` : points d'entrée des jeux, plus lisibles et découplés
-- `quiz/js/*.js` : scripts legacy encore conservés pour compatibilité
-- `quiz/js/script-score.js` : lecture et synthèse des scores
-- `quiz/tests/` : tests de régression JavaScript
+Les jeux partagent une logique commune pour gérer :
+
+- la progression
+- le rendu DOM
+- le stockage des scores dans les cookies
+- les comportements de validation et de fin de partie
+
+Le projet est volontairement conservé simple, sans framework ni build, afin de rester compatible avec un usage local et statique.
+
+## Structure du dépôt
+
+```text
+SeriousGame/
+├─ README.md
+├─ quiz/
+│  ├─ index.html
+│  ├─ score.html
+│  ├─ niveau-calcul.html
+│  ├─ niveau-qcm.html
+│  ├─ niveau-comprehension.html
+│  ├─ aide-domicile.html
+│  ├─ css/
+│  ├─ html/
+│  │  ├─ calcul-niveau-1.html
+│  │  ├─ calcul-niveau-2.html
+│  │  ├─ calcul-niveau-3.html
+│  │  ├─ qcm-niveau-1.html
+│  │  ├─ qcm-niveau-2.html
+│  │  ├─ qcm-niveau-3.html
+│  │  ├─ comprehension-niveau-1.html
+│  │  ├─ comprehension-niveau-2.html
+│  │  └─ comprehension-niveau-3.html
+│  ├─ js/
+│  │  ├─ core/
+│  │  │  ├─ quiz-core.js
+│  │  │  ├─ quiz-engine.js
+│  │  │  └─ cookie-storage.js
+│  │  ├─ data/
+│  │  │  └─ qcm-niveau-1.js
+│  │  ├─ games/
+│  │  │  ├─ calcul-niveau-1.js
+│  │  │  └─ qcm-niveau-1.js
+│  │  ├─ aide-domicile.js
+│  │  ├─ calcul-niveau-2.js
+│  │  ├─ calcul-niveau-3.js
+│  │  ├─ comprehension-niveau-1.js
+│  │  ├─ comprehension-niveau-2.js
+│  │  ├─ comprehension-niveau-3.js
+│  │  ├─ qcm-niveau-2.js
+│  │  ├─ qcm-niveau-3.js
+│  │  └─ script-score.js
+│  └─ tests/
+│     └─ quiz-regressions.test.js
+└─ .gitignore
+```
 
 ## Architecture
 
-Le cœur du projet a été refactoré pour éviter la duplication entre les jeux, sans introduire de framework :
+Le noyau partagé est centralisé dans `quiz/js/core/quiz-core.js`.
 
-- modules ES6 pour la logique commune
-- dossiers par responsabilité : `core`, `data`, `games`
-- service unique pour le stockage des cookies
-- moteur de quiz partagé pour le rendu et la progression
-- validation plus robuste des interactions utilisateur
+Il contient :
 
-Cette organisation garde le projet léger tout en rendant le code plus lisible et extensible si le volume augmente.
+- `Question`
+- `Quiz`
+- `CookieStorage`
+- `createQuizPage(...)`
+- `createCalculationQuiz(...)`
+
+Cette organisation permet de :
+
+- éviter la duplication du code entre les jeux
+- uniformiser la gestion des cookies et des scores
+- garder une logique de rendu cohérente
+- sécuriser les régressions avec un petit jeu de tests
 
 ## Règles de fonctionnement
 
-- Les jeux utilisent un compteur de progression visible : `Question X sur Y • N questions restantes`
-- Le champ de saisie est réinitialisé entre chaque question
-- La touche Entrée ne recharge plus la page : elle déclenche la validation via le formulaire
-- La fin de partie est gérée proprement à la dernière question
+Les jeux respectent un comportement homogène :
+
+- le compteur affiche le numéro de la question et le nombre restant : `Question X sur Y • N questions restantes`
+- le champ de saisie est réinitialisé à chaque nouvelle question
+- la validation du formulaire ne recharge plus la page
+- la fin de partie est gérée proprement à la dernière question
+- les scores sont enregistrés dans les cookies de navigation
+
+## Utilisation
+
+Le projet est statique : il fonctionne par simple ouverture du navigateur sur les fichiers HTML, sans serveur ni framework.
+
+Exemple :
+
+```bash
+cd SeriousGame/quiz
+# puis ouvrir index.html dans un navigateur
+```
 
 ## Tests
 
-Le projet inclut désormais des tests Node pour couvrir les régressions majeures :
+Le projet inclut des tests Node qui couvrent les régressions importantes :
 
-- stockage des scores dans les cookies
+- gestion des cookies et du score
 - progression du quiz
 - fin de partie
 - réinitialisation du champ de réponse
-- validation par clavier et bouton
+- validation clavier/bouton
+- ordre de chargement des scripts dans les pages de jeu
 
 Commande de validation :
+
+```bash
+cd quiz
+npm test
+```
+
+ou directement :
 
 ```bash
 cd quiz
 node --test --test-reporter=spec
 ```
 
-## Points d'amélioration futurs
+## Point d'amélioration retenu
 
-- extraire les questions dans des fichiers de données dédiés
-- uniformiser davantage les jeux legacy et le noyau partagé
-- migrer vers une architecture plus moderne si le projet grandit
+Le projet privilégie une architecture légère et lisible, sans framework, mais avec une modularisation raisonnable :
+
+- `core` pour la logique partagée
+- `data` pour les contenus
+- `games` pour les points d'entrée
+- `html` pour les écrans
+
+Cette approche garde le projet simple, maintenable et extensible sans introduire une complexité inutile.
